@@ -3,9 +3,11 @@ package msa.userserver.dto;
 import lombok.Builder;
 import lombok.Data;
 import msa.userserver.domain.UserEntity;
+import msa.userserver.vo.ResponseOrder;
 import msa.userserver.vo.ResponseUser;
 
 import java.util.Date;
+import java.util.List;
 
 @Data
 public class UserDto {
@@ -15,6 +17,7 @@ public class UserDto {
     private String userId;
     private Date createdAt;
     private String encryptedPwd;
+    private List<ResponseOrder> orders;
 
     public UserDto(String name, String email, String pwd) {
         this.name = name;
