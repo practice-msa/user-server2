@@ -1,15 +1,23 @@
 package msa.userserver.service;
 
+import feign.FeignException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import msa.userserver.client.OrderServiceClient;
 import msa.userserver.domain.UserEntity;
 import msa.userserver.domain.UserRepository;
 import msa.userserver.dto.UserDto;
 import msa.userserver.vo.ResponseOrder;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.core.env.Environment;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,10 +25,14 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class UserServiceImpl implements UserService{
 //    private final BCryptPasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final Environment env;
+    private final OrderServiceClient orderServiceClient;
+//    private final RestTemplate restTemplate;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -53,7 +65,22 @@ public class UserServiceImpl implements UserService{
             throw new UsernameNotFoundException("user not found");
         }
 
-        List<ResponseOrder> orders = new ArrayList<>();
+//        String orderUrl = String.format(env.getProperty("order_service.url"),userId);
+//
+//        ResponseEntity<List<ResponseOrder>> orderListResponse =
+//                restTemplate.exchange(orderUrl, HttpMethod.GET, null, new ParameterizedTypeReference<List<ResponseOrder>>() {
+//                });
+
+//        List<ResponseOrder> orders = orderListResponse.getBody();
+        // feign
+//        List<ResponseOrder> orders = null;
+//        try {
+//            orders = orderServiceClient.getOrders(userId);
+//        }catch (FeignException ex){
+//            log.error(ex.getMessage());
+//        }
+
+        List<ResponseOrder> orders = orderServiceClient.getOrders(userId);
         UserDto userDto = UserDto.from(userEntity);
         userDto.setOrders(orders);
         return userDto;

@@ -44,7 +44,7 @@ greeting:
 
 logging:
   level:
-    msa.userserver: DEBUG
+    msa.userserver.client: DEBUG
 
 management:
   endpoints:
@@ -52,7 +52,11 @@ management:
       exposure:
         include: refresh, health, beans, busrefresh
 
+order_service:
+  url: http://ORDER-SERVICE/order-service/%s/orders
 
-#token:
-#  expiration_time: 86400000
-#  secret: Y2hvcHBhLWRvbnQtYml0ZS1tZS1zcHJpbmctYm9vdC1qd3QtdGVzdC1zZWNyZXQta2V5LWNob3BwYS1kb250LWJpdGUtbWUtc3ByaW5nLWJvb3Qtand0LXRlc3Qtc2VjcmV0LWtleQo=
+
+
+token:
+  expiration_time: 86400000
+  secret: Y2hvcHBhLWRvbnQtYml0ZS1tZS1zcHJpbmctYm9vdC1qd3QtdGVzdC1zZWNyZXQta2V5LWNob3BwYS1kb250LWJpdGUtbWUtc3ByaW5nLWJvb3Qtand0LXRlc3Qtc2VjcmV0LWtleQo=
