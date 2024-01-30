@@ -8,6 +8,8 @@ import msa.userserver.domain.UserEntity;
 import msa.userserver.domain.UserRepository;
 import msa.userserver.dto.UserDto;
 import msa.userserver.vo.ResponseOrder;
+import org.springframework.cloud.client.circuitbreaker.CircuitBreaker;
+import org.springframework.cloud.client.circuitbreaker.CircuitBreakerFactory;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpMethod;
@@ -27,11 +29,11 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @Slf4j
 public class UserServiceImpl implements UserService{
-//    private final BCryptPasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final Environment env;
     private final OrderServiceClient orderServiceClient;
+    private final CircuitBreakerFactory circuitBreakerFactory;
 //    private final RestTemplate restTemplate;
 
     @Override
@@ -80,8 +82,13 @@ public class UserServiceImpl implements UserService{
 //            log.error(ex.getMessage());
 //        }
 
-        List<ResponseOrder> orders = orderServiceClient.getOrders(userId);
+        // 원래 feign 코드
+//        List<ResponseOrder> orders = orderServiceClient.getOrders(userId);
         UserDto userDto = UserDto.from(userEntity);
+
+        CircuitBreaker circuitBreaker = circuitBreakerFactory.create("circuitBreaker");
+        List<ResponseOrder> orders = circuitBreaker.run(()->orderServiceClient.getOrders(userId), throwable -> new ArrayList<>());
+
         userDto.setOrders(orders);
         return userDto;
     }
