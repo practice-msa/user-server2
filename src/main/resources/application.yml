@@ -56,7 +56,7 @@ management:
   endpoints:
     web:
       exposure:
-        include: refresh, health, beans, busrefresh
+        include: refresh, health, beans, busrefresh, info, metrics, prometheus
 
 order_service:
   url: http://ORDER-SERVICE/order-service/%s/orders

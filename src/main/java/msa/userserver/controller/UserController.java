@@ -1,5 +1,6 @@
 package msa.userserver.controller;
 
+import io.micrometer.core.annotation.Timed;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import msa.userserver.domain.UserEntity;
@@ -29,6 +30,7 @@ public class UserController {
 
 
     @RequestMapping("/health_check")
+    @Timed(value="users.status", longTask = true)
     public String status(){
 
         return String.format("It's working in User Service"
@@ -39,6 +41,7 @@ public class UserController {
     }
 
     @RequestMapping("/welcome")
+    @Timed(value="users.welcome", longTask = true)
     public String welcome(){
 //        return env.getProperty("greeting.message");
         return greeting.getMessage();
