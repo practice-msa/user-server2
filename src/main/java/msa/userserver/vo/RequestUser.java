@@ -1,23 +1,29 @@
 package msa.userserver.vo;
 
-import com.sun.istack.NotNull;
-import lombok.Data;;
+import lombok.Data;
 import msa.userserver.dto.UserDto;
 import org.hibernate.annotations.BatchSize;
+
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 @Data
 public class RequestUser {
 
-//    @NotNull(message= "not email")
-//    @BatchSize(min=2,message="적어")
+    @NotNull(message = "not email")
+    @Size(min = 2, message = "적어")
     private String email;
+
+    @NotNull
     private String name;
-    private String pwd;
+
+    @NotNull
+    private String password;
 
     public UserDto toDto() {
         return UserDto.builder()
                 .email(email)
-                .pwd(pwd)
+                .pwd(password)
                 .name(name)
                 .build();
     }
