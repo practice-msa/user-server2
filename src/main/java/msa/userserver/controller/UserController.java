@@ -15,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -48,7 +49,7 @@ public class UserController {
     }
 
     @PostMapping("/users")
-    public ResponseEntity<ResponseUser> createUser(@RequestBody RequestUser user){
+    public ResponseEntity<ResponseUser> createUser(@RequestBody @Valid RequestUser user){
         UserDto userDto = userService.createUser(user.toDto());
 
         return ResponseEntity.status(HttpStatus.CREATED).body(ResponseUser.from(userDto));
