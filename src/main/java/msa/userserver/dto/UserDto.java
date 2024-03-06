@@ -13,23 +13,22 @@ import java.util.List;
 public class UserDto {
     private String email;
     private String name;
-    private String pwd;
     private String userId;
     private Date createdAt;
-    private String encryptedPwd;
+    private String password;
     private List<ResponseOrder> orders;
 
-    public UserDto(String name, String email, String pwd) {
+    public UserDto(String name, String email, String password) {
         this.name = name;
         this.email = email;
-        this.pwd = pwd;
+        this.password = password;
     }
     @Builder
-    public UserDto(String userId, String name, String email, String pwd) {
+    public UserDto(String userId, String name, String email, String password) {
         this.userId = userId;
         this.name = name;
         this.email = email;
-        this.pwd = pwd;
+        this.password = password;
     }
 
     public static UserDto from(UserEntity userEntity) {
@@ -45,11 +44,8 @@ public class UserDto {
                 .userId(userId)
                 .name(name)
                 .email(email)
-                .encryptedPwd(encryptedPwd)
+                .password(password)
                 .build();
     }
 
-    public void initEncryptedPassword(String encryptedPassword) {
-        this.encryptedPwd = encryptedPwd;
-    }
 }

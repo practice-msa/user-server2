@@ -20,15 +20,16 @@ public class UserEntity {
     private String name;
     @Column(nullable = false, unique = true)
     private String userId;
-    @Column(nullable = false, unique = true)
-    private String encryptedPwd;
+
+    @Embedded
+    private Password password;
 
     @Builder
-    public UserEntity(String email, String name, String userId, String encryptedPwd) {
+    public UserEntity(String email, String name, String userId, String password) {
         this.email = email;
         this.name = name;
         this.userId = userId;
-        this.encryptedPwd = encryptedPwd;
+        this.password = new Password(password);
     }
 
 }

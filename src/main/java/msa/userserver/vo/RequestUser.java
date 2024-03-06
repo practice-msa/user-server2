@@ -23,7 +23,7 @@ public class RequestUser {
     public UserDto toDto() {
         return UserDto.builder()
                 .email(email)
-                .pwd(password)
+                .password(password)
                 .name(name)
                 .build();
     }
