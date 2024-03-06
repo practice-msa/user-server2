@@ -1,7 +1,9 @@
 package msa.userserver.security;
 
 import lombok.RequiredArgsConstructor;
+import msa.userserver.domain.UserRepository;
 import msa.userserver.service.UserService;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -9,6 +11,10 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.security.web.access.AccessDeniedHandler;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
+import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.Filter;
@@ -16,11 +22,12 @@ import javax.servlet.Filter;
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
-// 보안 설정 클래스
 public class WebSecurity extends WebSecurityConfigurerAdapter {
     private final Environment env;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final UserService userService;
+    private final UserRepository userRepository;
+    private final CustomLoginFailureHandler loginFailureHandler;
     // 이건 권한
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -34,8 +41,8 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
     }
 
     private AuthenticationFilter getAuthenticationFilter() throws Exception{
-        AuthenticationFilter authenticationFilter = new AuthenticationFilter(authenticationManager(),userService,env);
-//        authenticationFilter.setAuthenticationManager(authenticationManager());
+        AuthenticationFilter authenticationFilter = new AuthenticationFilter(authenticationManager(),userService,userRepository,env);
+        authenticationFilter.setAuthenticationFailureHandler(new CustomLoginFailureHandler(userService,userRepository));
 
         return authenticationFilter;
     }
@@ -48,4 +55,5 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
         // 사용자가 전달했던 이메일 패스워드를 가지고 로그인 처리
         auth.userDetailsService(userService).passwordEncoder(bCryptPasswordEncoder);
     }
+
 }
