@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import msa.userserver.domain.UserEntity;
 import msa.userserver.dto.UserDto;
+import msa.userserver.dto.response.ApiResponse;
 import msa.userserver.service.UserService;
 import msa.userserver.vo.Greeting;
 import msa.userserver.vo.RequestUser;
@@ -31,7 +32,7 @@ public class UserController {
 
 
     @RequestMapping("/health_check")
-    @Timed(value="users.status", longTask = true)
+    //@Timed(value="users.status", longTask = true)
     public String status(){
 
         return String.format("It's working in User Service"
@@ -42,34 +43,34 @@ public class UserController {
     }
 
     @RequestMapping("/welcome")
-    @Timed(value="users.welcome", longTask = true)
+    //@Timed(value="users.welcome", longTask = true)
     public String welcome(){
 //        return env.getProperty("greeting.message");
         return greeting.getMessage();
     }
 
     @PostMapping("/users")
-    public ResponseEntity<ResponseUser> createUser(@RequestBody @Valid RequestUser user){
+    public ApiResponse<ResponseUser> createUser(@RequestBody @Valid RequestUser user){
         UserDto userDto = userService.createUser(user.toDto());
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(ResponseUser.from(userDto));
+        ResponseUser res = ResponseUser.from(userDto);
+        return new ApiResponse<>(true,res,null);
     }
 
     @GetMapping("/users")
-    public ResponseEntity<List<ResponseUser>> getUsers(){
+    public ApiResponse<List<ResponseUser>> getUsers(){
         Iterable<UserEntity> userList = userService.getUserByAll();
         List<ResponseUser> result = new ArrayList<>();
 
         for (UserEntity userEntity : userList) {
             result.add(ResponseUser.from(userEntity));
         }
-        return ResponseEntity.status(HttpStatus.OK).body(result);
+        return new ApiResponse<>(true,result,null);
     }
 
     @GetMapping("/users/{userId}")
-    public ResponseEntity<ResponseUser> getUser(@PathVariable String userId){
+    public ApiResponse<ResponseUser> getUser(@PathVariable String userId){
         UserDto userDto  = userService.getUserByUserId(userId);
 
-        return ResponseEntity.status(HttpStatus.OK).body(ResponseUser.from(userDto));
+        return new ApiResponse<>(true,ResponseUser.from(userDto),null);
     }
 }
